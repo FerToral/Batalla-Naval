@@ -66,6 +66,11 @@ def nuevoJuego(
 ## Ejercicio 3
 def esEstadoDeJuegoVálido(estadoDeJuego: EstadoJuego) -> bool:
     """ Agregar docstring acá
+    indica si el estado de juego propuesto es valido o si hay algun error que no permite un desarrollo del juego en condiciones
+    pre: {true}
+    arg: el resultado es True si todas las funciones (a,b,c,d,e,f,g,h) tienen como resultado True
+    arg: el resultado es False si al menos una de las funciones (a,b,c,d,e,f,g,h) tiene como resultado False
+    return: True si el estado es valido o False si el estado es invalido
     """
     a = cantidadDeFilasEstadoJuego(estadoDeJuego) >= 1
     b = cantidadDeFilasEstadoJuego(estadoDeJuego) <= 26
@@ -141,6 +146,16 @@ estadoDeJuego = (((2,2),[2],[UNO],
 
 def dispararEnPosición(estado_juego: EstadoJuego, posición: Posición) -> ResultadoDisparo:
     """ Agregar docstring acá
+    Indica si el disparo fue a un barco o fue al agua
+    pre:el estado de juego es valido
+    pre:la posicion de ataque esta dentro de la grilla
+    pre:no se ataco previamente a esa posicion
+    arg:modifica el estado de juego segun el disparo
+    arg:solo modifica la celda disparada
+    arg:si se dispara a un barco la celda con esa posicion en la grilla del oponente se reemplaza por Barco
+    arg:si se dispara al agua la celda con esa posicion en la grilla del oponente se reemplaza por agua
+    arg:si se dispara al agua la celda con esa posicion en la grilla local del contrincante se reemplaza por agua
+    return: devuelve TOCADO si se dispara a un BARCO o devuelve NADA si se dispara a un VACÍO
     """
     if turno(estado_juego) == UNO:
         t2 = DOS
