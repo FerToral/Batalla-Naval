@@ -253,3 +253,64 @@ def barcosEnGrilla(grilla: Grilla) -> list[BarcoEnGrilla]:
 
     return res
 
+    #Ejercicio 6
+
+def posicionesDeBarcos(barcos: list[BarcoEnGrilla]) -> list[Posición]:
+    posiciones: list[Posición] = []
+
+    for barco in barcos:
+        for pos in barco:
+            posiciones.append(pos)
+    
+    return posiciones
+
+
+def todosLosBarcosDescubiertos(grillaJugadorOponente: Grilla, grillaOponenteLocal: Grilla) -> bool:
+
+    res = True
+    barcos_acertados: list[BarcoEnGrilla] = barcosEnGrilla(grillaJugadorOponente)
+    barcos_totales: list[BarcoEnGrilla] = barcosEnGrilla(grillaOponenteLocal)
+
+    posiciones_de_barcos_acertados: list[Posición] = posicionesDeBarcos(barcos_acertados)
+    posiciones_de_barcos_totales: list[Posición] = posicionesDeBarcos(barcos_totales)
+
+    
+    for pos_de_total in posiciones_de_barcos_totales:
+        if pos_de_total not in posiciones_de_barcos_acertados:
+            res = False
+    
+    return res
+
+ 
+def hayAgua(grillaLocalOponente: Grilla) -> bool:
+    res: bool = False
+    dimensiones_grilla: Dimensiones = dimensionesGrilla(grillaLocalOponente)
+    for fila in range(dimensiones_grilla[0]):
+        for colum in range(dimensiones_grilla[1]):
+            if grillaLocalOponente[fila][colum] == AGUA:
+                res = True
+
+    return res        
+
+def esJugadorPerfecto(estadoDeJuego: EstadoJuego, jugador: Jugador) -> bool:
+    tablero_jugador_UNO: Tablero = estadoDeJuego[3]
+    tablero_jugador_DOS: Tablero = estadoDeJuego[4]
+  
+
+    """"
+    Para que sea jugador PERFECT, cumple:
+    si es jugador UNO, la grilla local está intacta, la grilla del oponente esta destruida
+    """
+    if jugador == UNO:
+       a: bool = todosLosBarcosDescubiertos(tablero_jugador_UNO[1], tablero_jugador_DOS[0])
+       b: bool = hayAgua(tablero_jugador_UNO[1])
+    if jugador == DOS:
+       a: bool = todosLosBarcosDescubiertos(tablero_jugador_DOS[1], tablero_jugador_UNO[0])
+       b: bool = hayAgua(tablero_jugador_DOS[1])
+
+    return a and not b
+
+def hayJugadorPerfecto(estadoDeJuego: EstadoJuego) -> bool:
+
+    return esJugadorPerfecto(estadoDeJuego,UNO) or esJugadorPerfecto(estadoDeJuego, DOS)
+
