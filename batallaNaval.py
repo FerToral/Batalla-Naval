@@ -311,6 +311,12 @@ def esJugadorPerfecto(estadoDeJuego: EstadoJuego, jugador: Jugador) -> bool:
     return a and not b
 
 def hayJugadorPerfecto(estadoDeJuego: EstadoJuego) -> bool:
+    """
+    indica si algun jugador encontro todos los barcos rivales sin hacer ningun disparo a la nada
+    pre:el estado de juego es valido
+    arg: un booleano = el jugador UNO o el jugador DOS hizo una partida perfecta
+    return True si hubo jugador perfecto False si no hubo
+    """
 
     return esJugadorPerfecto(estadoDeJuego,UNO) or esJugadorPerfecto(estadoDeJuego, DOS)
 
