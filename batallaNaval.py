@@ -6,58 +6,64 @@ from biblioteca import *
 
 def cantidadDeBarcosDeTamaño(barcos: list[BarcoEnGrilla], tamaño: int) -> int:
     """ 
-        Indica si la cantidad de barcos de tamaño *tamaño*
+        Devuelve la cantidad de barcos de un tamaño dado dentro de la lista de barcos en una grilla.
 
         Pre: La lista barcos contiene solamente barcos validos
 
-        Args: barcos: Lista de Barcos que estan en la grilla (son representados a través de las posiciones que tienen en la grilla)
-              tamaño: tamaño/posiciones que tiene un barco en la grilla   
-        Return la cantidad de barcos que sean de tamaño *tamaño*
+        Argumentos: barcos: Lista de Barcos que estan en la grilla (son representados a través de las posiciones que tienen en la grilla)
+              tamaño: tamaño/posiciones que tiene un barco en la grilla 
+        Post: Regresa la cantidad de barcos que tienen el tamaño especificado en el paramatro de la función
 
-
+        
     """
 
-    contador: int = 0
-    for barcoEnGrilla in barcos:
-        if tamañoBarco(barcoEnGrilla) == tamaño:
-            contador+=1
+    cantidadBarcos: int = 0
+    for barcoActual in barcos:
+        cantidadBarcos += unoSiCeroSiNo(tamañoBarco(barcoActual) == tamaño)
 
-    return contador
+    return cantidadBarcos
 
 ## Ejercicio 2
 
+def grillaVacia(filas: int, columnas: int) -> Grilla:
+    """
+    Devuelve una grilla vacía de las dimensiones dadas,
+    cada posición de la misma se inicializa con VACÍO.
+    """
+    return [[VACÍO for _ in range(columnas)] for _ in range(filas)]
+
 def armadoDeTablero( filas: int, columnas: int) -> Tablero:
-    grilla_local = [[VACÍO for _ in range(columnas)] for _ in range(filas)]
-    grilla_oponente = [[VACÍO for _ in range(columnas)] for _ in range(filas)]
-    
-    return (grilla_local, grilla_oponente)
+    """
+    Devuelve un tablero inicial compuesto por dos grillas vacías, una para el jugador local y otra para el oponente
+    """
+
+    return (grillaVacia(filas, columnas), grillaVacia(filas, columnas))
 
 def nuevoJuego(
         cantidadDeFilas: int,
         cantidadDeColumnas: int,
         barcosDisponibles: list[Barco]
     ) -> EstadoJuego:
-    """ Agregar docstring acá
-    Además de los requiere del tp, asumo que lo siguiente:
-            - El tamaño de los barcos no excede de las dimensiones
-            - La cantidad de barcos que se puede agregar depende del tamaño y de que no queden juntos (aunque esto puede parecer mas un asegura)
+    """
+    Crea un nuevo estado de juego listo para comenzar.
+
+    Pre:
+        - cantidadDeFilas > 0 y cantidadDeColumnas > 0.
+        - Los tamaños de los barcos en `barcosDisponibles` no exceden las dimensiones del tablero.
+
+    Post:
+        - Devuelve un EstadoJuego donde ambos tableros están vacíos.
+        - La lista de barcos en juego es una copia de `barcosDisponibles`.
+    
 
     """
-   
-
-    barcos_en_juego: list[Barco] = barcosDisponibles.copy()
-    dimension_grilla: Dimensiones = (cantidadDeFilas, cantidadDeColumnas)
-    nuevo_tablero_j1: Tablero = armadoDeTablero(cantidadDeFilas, cantidadDeColumnas)
-    nuevo_tablero_j2: Tablero = armadoDeTablero(cantidadDeFilas, cantidadDeColumnas)
-    jugadores = jugadorQueEmpieza()
-
 
     nuevo_juego: EstadoJuego = (
-        dimension_grilla, 
-        barcos_en_juego, 
-        jugadores, 
-        nuevo_tablero_j1, 
-        nuevo_tablero_j2 
+        (cantidadDeFilas, cantidadDeColumnas), 
+        barcosDisponibles.copy(), 
+        jugadorQueEmpieza(),
+        armadoDeTablero(cantidadDeFilas, cantidadDeColumnas), 
+        armadoDeTablero(cantidadDeFilas, cantidadDeColumnas)
     )
 
     return nuevo_juego
@@ -65,23 +71,33 @@ def nuevoJuego(
 
 ## Ejercicio 3
 def esEstadoDeJuegoVálido(estadoDeJuego: EstadoJuego) -> bool:
-    """ Agregar docstring acá
+    """
     indica si el estado de juego propuesto es valido o si hay algun error que no permite un desarrollo del juego en condiciones
-    pre: {true}
-    arg: el resultado es True si todas las funciones (a,b,c,d,e,f,g,h) tienen como resultado True
-    arg: el resultado es False si al menos una de las funciones (a,b,c,d,e,f,g,h) tiene como resultado False
+    requiere: {true}
+    asegura: resutado = 1 ≤ cantidad de filas del estado de juego ≤ 26 ∧
+             cantidad de columnas del estado de juego > 0 ∧
+             tamaño de estado de juego[2] = 1 ∧
+             tamaño de estado de juego[1] > 0 ∧
+             tablero del jugador UNO Válido ∧
+             tablero del jugador DOS Válido ∧
+             coinciden las posiciones atacadas en el tablero del jugador UNO y el tablero del jugador DOS
     return: True si el estado es valido o False si el estado es invalido
     """
-    a = cantidadDeFilasEstadoJuego(estadoDeJuego) >= 1
-    b = cantidadDeFilasEstadoJuego(estadoDeJuego) <= 26
-    c = cantidadDeColumnasEstadoJuego(estadoDeJuego) > 0
-    d = len(estadoDeJuego[2]) == 1
-    e = len(barcosDisponibles(estadoDeJuego)) > 0
-    f = tableroVálidoEnJuego(tableroDeJugador(estadoDeJuego,UNO),estadoDeJuego)
-    g = tableroVálidoEnJuego(tableroDeJugador(estadoDeJuego,DOS),estadoDeJuego)
-    h = coincidenPosicionesAtacadas(tableroDeJugador(estadoDeJuego,UNO),tableroDeJugador(estadoDeJuego,DOS))
+    cantidad_de_filas_del_estado_de_juego_validas = cantidadDeFilasEstadoJuego(estadoDeJuego) >= 1 and cantidadDeFilasEstadoJuego(estadoDeJuego) <= 26
+    cantidad_de_columnas_del_estado_de_juego_validas = cantidadDeColumnasEstadoJuego(estadoDeJuego) > 0
+    solo_hay_una_lista_en_turno = len(estadoDeJuego[2]) == 1
+    hay_al_menos_un_barco_disponible = len(barcosDisponibles(estadoDeJuego)) > 0
+    tablero_del_jugador_UNO_Válido = tableroVálidoEnJuego(tableroDeJugador(estadoDeJuego,UNO),estadoDeJuego)
+    tablero_del_jugador_DOS_Válido = tableroVálidoEnJuego(tableroDeJugador(estadoDeJuego,DOS),estadoDeJuego)
+    coniciden_las_posiciones_atacadas_en_las_grillas_opuestas = coincidenPosicionesAtacadas(tableroDeJugador(estadoDeJuego,UNO),tableroDeJugador(estadoDeJuego,DOS))
 
-    return a and b and c and d and e and f and g and h
+    return (cantidad_de_filas_del_estado_de_juego_validas 
+            and cantidad_de_columnas_del_estado_de_juego_validas 
+            and solo_hay_una_lista_en_turno 
+            and hay_al_menos_un_barco_disponible 
+            and tablero_del_jugador_UNO_Válido 
+            and tablero_del_jugador_DOS_Válido 
+            and coniciden_las_posiciones_atacadas_en_las_grillas_opuestas)
 
 def tableroVálidoEnJuego(tablero:Tablero,estadoDeJuego:EstadoJuego) -> bool:
     return grillaVálidaEnJuego(grillaLocal(tablero),estadoDeJuego) and grillaVálidaEnJuego(grillaOponente(tablero),estadoDeJuego) and coincidenBarcosEnGrilla(barcosDisponibles(estadoDeJuego),grillaLocal(tablero))
@@ -89,132 +105,136 @@ def tableroVálidoEnJuego(tablero:Tablero,estadoDeJuego:EstadoJuego) -> bool:
 def coincidenBarcosEnGrilla(barcos:list[Barco],grilla:Grilla) -> bool:
     return mismosElementos(barcos,tamaños(barcosEnGrilla(grilla)))
 
-
 def tamaños(barcos:list[BarcoEnGrilla]) -> list[int]:
-            res = []
-            for i in range (2,6):
-                cant = cantidadDeBarcosDeTamaño(barcos,i)
-                while cant > 0:
-                    res = res + [i]
-                    cant = cant - 1
-            return res
+            tamañosPorAhora = []
+            for i in range (len(barcos)):
+              tamañosPorAhora = tamañosPorAhora + [tamañoBarco(barcos[i])]
+            return tamañosPorAhora
 def mismosElementos(lista1: list[str],lista2: list[str]) -> bool:
-    res = True
-    for i in range (len(losElementosDeLaPrimeraAparecenEnLaSegunda(lista1,lista2))):
-        res = res and losElementosDeLaPrimeraAparecenEnLaSegunda(lista1,lista2)[i]
-    return res
+    return losElementosDeLaPrimeraAparecenEnLaSegunda(lista1,lista2) and losElementosDeLaSegundaAparecenEnLaPrimera(lista1,lista2)
 
 def losElementosDeLaPrimeraAparecenEnLaSegunda(lista1:list[str],lista2:list[str]) -> list[bool]:
-    res = [cantidadDeApariciones(elemento,lista1) == cantidadDeApariciones(elemento,lista2) for elemento in lista1 for elemento in lista2]
+    res = True
+    for elemento in lista1:
+        res = res and cantidadDeApariciones(elemento,lista1) == cantidadDeApariciones(elemento,lista2)
+    return res
+def losElementosDeLaSegundaAparecenEnLaPrimera(lista1:list[str],lista2:list[str]) -> list[bool]:
+    res = True
+    for elemento in lista2:
+        res = res and cantidadDeApariciones(elemento,lista1) == cantidadDeApariciones(elemento,lista2)
     return res
 
 def coincidenPosicionesAtacadas(tablero:Tablero,tableroOponente:Tablero) -> bool:
     res = True
     for fila in range (len(tablero[1])):
-        for posicion in range (len(tablero[1][fila])):
-            if tablero[1][fila][posicion] != VACÍO:
-              if tableroOponente[0][fila][posicion] == tablero[1][fila][posicion]:
-                res = res and True
-              else:
-                res = res and False
-            else:
-              if tableroOponente[0][fila][posicion] == VACÍO or tableroOponente[0][fila][posicion] == BARCO:
-                res = res and True
-              else:
-                res = res and False
+        res = res and coincidenPosicionesAtacadasEnCadaFila(tablero,tableroOponente,fila)
     for fila in range (len(tableroOponente[1])):
-        for posicion in range (len(tableroOponente[1][fila])):
-            if tableroOponente[1][fila][posicion] != VACÍO:
-              if tablero[0][fila][posicion] == tableroOponente[1][fila][posicion]:
-                res = res and True
-              else:
-                res = res and False
+        res = res and coincidenPosicionesAtacadasEnCadaFila(tableroOponente,tablero,fila)
+    return res
+
+def coincidenPosicionesAtacadasEnCadaFila(tablero:Tablero,tableroOponente:Tablero,fila) -> bool:
+    res = True
+    for posicion in range (len(tablero[1][fila])):
+            if tablero[1][fila][posicion] != VACÍO:
+              res = res and posicionEnTableroOponenteEsPosicionEnTablero(tablero,tableroOponente,fila,posicion)
             else:
-              if tablero[0][fila][posicion] == VACÍO or tablero[0][fila][posicion] == BARCO:
+              res = res and posicionEnTableroOponenteEsVacioOBarco(tableroOponente,fila,posicion)
+              if tableroOponente[0][fila][posicion] == VACÍO or tableroOponente[0][fila][posicion] == BARCO:
                 res = res and True
               else:
                 res = res and False
     return res
 
-estadoDeJuego = (((2,2),[2],[UNO],
-([[BARCO, VACÍO], [BARCO, VACÍO]],
-[[VACÍO,VACÍO], [VACÍO, VACÍO]]),   
-([[BARCO, BARCO], [VACÍO, VACÍO]],
-[[VACÍO, VACÍO], [VACÍO, VACÍO]])))
+def posicionEnTableroOponenteEsPosicionEnTablero(tablero:Tablero,tableroOponente:Tablero,fila,posicion) -> bool:
+    res = True
+    if tableroOponente[0][fila][posicion] == tablero[1][fila][posicion]:
+        res = res and True
+    else:
+        res = res and False
+    return res
+
+def posicionEnTableroOponenteEsVacioOBarco(tableroOponente:Tablero,fila,posicion) -> bool:
+    res = True
+    if tableroOponente[0][fila][posicion] == VACÍO or tableroOponente[0][fila][posicion] == BARCO:
+        res = res and True
+    else:
+        res = res and False
+    return res
 
 ## Ejercicio 4
 
 def dispararEnPosición(estado_juego: EstadoJuego, posición: Posición) -> ResultadoDisparo:
-    """ Agregar docstring acá
+    """
     Indica si el disparo fue a un barco o fue al agua
-    pre:el estado de juego es valido
-    pre:la posicion de ataque esta dentro de la grilla
-    pre:no se ataco previamente a esa posicion
-    arg:modifica el estado de juego segun el disparo
-    arg:solo modifica la celda disparada
-    arg:si se dispara a un barco la celda con esa posicion en la grilla del oponente se reemplaza por Barco
-    arg:si se dispara al agua la celda con esa posicion en la grilla del oponente se reemplaza por agua
-    arg:si se dispara al agua la celda con esa posicion en la grilla local del contrincante se reemplaza por agua
+    Requiere:el estado de juego es valido
+    Requiere:la posicion de ataque esta dentro de la grilla
+    Requiere:no se ataco previamente a esa posicion
+    Asegura:modifica el estado de juego segun el disparo
+    Asegura:solo modifica la celda disparada
+    Asegura:si se dispara a un barco la celda con esa posicion en la grilla del oponente se reemplaza por Barco
+    Asegura:si se dispara al agua la celda con esa posicion en la grilla del oponente se reemplaza por agua
+    Asegura:si se dispara al agua la celda con esa posicion en la grilla local del contrincante se reemplaza por agua
     return: devuelve TOCADO si se dispara a un BARCO o devuelve NADA si se dispara a un VACÍO
     """
-    if turno(estado_juego) == UNO:
-        t2 = DOS
-    if turno(estado_juego) == DOS:
-        t2 = UNO
-    if celdaEnPosición(grillaLocal((tableroDeJugador(estado_juego, t2))), posición) == VACÍO:
-        disparoHaceAgua(estado_juego,posición)
+    if celdaEnPosición(grillaLocal((tableroDeJugador(estado_juego, contrario(turno(estado_juego))))), posición) == VACÍO:
+        nuevoEstadoDeJuegoSiDisparoHaceAgua(estado_juego,posición)
         res = NADA
-    if celdaEnPosición(grillaLocal((tableroDeJugador(estado_juego, t2))), posición) == BARCO:
-        disparoAlBarco(estado_juego,posición)
+    else:
+        nuevoEstadoDeJuegoSiDisparoAlBarco(estado_juego,posición)
         res = TOCADO
-    return res # TODO: Implementame
+    return res 
 
-def disparoHaceAgua(estado_juego:EstadoJuego,posición: Posición) -> ResultadoDisparo:
-    if turno(estado_juego) == UNO:
-        t2 = DOS
-    if turno(estado_juego) == DOS:
-        t2 = UNO
-    cambiarCeldaGrilla(grillaLocal(tableroDeJugador(estado_juego, t2)), posición, AGUA)
+def nuevoEstadoDeJuegoSiDisparoHaceAgua(estado_juego:EstadoJuego,posición: Posición) -> ResultadoDisparo:
+    cambiarCeldaGrilla(grillaLocal(tableroDeJugador(estado_juego, contrario(turno(estado_juego)))), posición, AGUA)
     cambiarCeldaGrilla(grillaOponente(tableroDeJugador(estado_juego, turno(estado_juego))), posición, AGUA)
     cambiarTurno(estado_juego)
     return estado_juego
     
-def disparoAlBarco(estado_juego:EstadoJuego,posición: Posición) -> ResultadoDisparo:
-    if turno(estado_juego) == UNO:
-        t2 = DOS
-    if turno(estado_juego) == DOS:
-        t2 = UNO
+def nuevoEstadoDeJuegoSiDisparoAlBarco(estado_juego:EstadoJuego,posición: Posición) -> ResultadoDisparo:
     cambiarCeldaGrilla(grillaOponente(tableroDeJugador(estado_juego, turno(estado_juego))), posición, BARCO)
     cambiarTurno(estado_juego)
     return estado_juego
 
+def contrario (jugador:Jugador) -> Jugador:
+    jugadorContrario = DOS if jugador == UNO else UNO
+    return jugadorContrario
 ## Ejercicio 5
 
 def indiceAPosicion(fila: int, columna: int) -> Posición:
-    letra = chr(fila + ord('A'))
-    return (letra, columna+1)
+    """
+    Devuelve la posición correspondiente a los índices dados.
+    """
+    return (chr(fila + ord('A')), columna+1)
 
-def  construirBarcoDesdePosicion(grilla: Grilla, inicio: Posición, visitadas:list[Posición]) -> list[Posición]:
+def agregarBarcoEn(grilla: Grilla, desde: Posición, direccion: Dirección,
+                     barco_actual: list[Posición]) -> None:
     
+    posicion_actual: Posición = desde
+
+    while hayBarcoAl(grilla, posicion_actual, direccion):
+        posicion_actual = posiciónAdyacenteAl(grilla, posicion_actual, direccion)
+        barco_actual.append(posicion_actual)
+
+
+def  barcoDesdePosicion(grilla: Grilla, inicio: Posición) -> list[Posición]:
     
-    barco: list[Posición] = []
-    barco.append(inicio)
-    visitadas.append(inicio)
-    direccion_de_construccion: Dirección = DERECHA if hayBarcoAl(grilla, inicio, DERECHA) else ARRIBA
+    barco_actual: list[Posición] = []
+    barco_actual.append(inicio)
 
-    posicion_siguiente: Posición = inicio
+    if hayBarcoAl(grilla, inicio, DERECHA):
+        agregarBarcoEn(grilla, inicio, DERECHA, barco_actual)
+    elif hayBarcoAl(grilla, inicio, ARRIBA):
+        agregarBarcoEn(grilla, inicio, ARRIBA, barco_actual)
 
-    while hayBarcoAl(grilla, posicion_siguiente, direccion_de_construccion):
-        posicion_siguiente: Posición = posiciónAdyacenteAl(grilla, posicion_siguiente, direccion_de_construccion)
-        barco.append(posicion_siguiente)
-        visitadas.append(posicion_siguiente)
+
+    return barco_actual
+
+def esUnBarcoNoVisitado(grilla, posicionActual, visitadas) -> bool:
+    return celdaEnPosición(grilla, posicionActual) == BARCO and posicionActual not in visitadas
     
-
-    return barco
-
 
 def barcosEnGrilla(grilla: Grilla) -> list[BarcoEnGrilla]:
-    """ Agregar docstring acá
+    """
     Identifica y devuelve una lista de barcos presentes en la grilla
 
     Recorre la grilla celda por celdad y agrupa las celdas marcadas como BARCO en barcos.
@@ -237,37 +257,53 @@ def barcosEnGrilla(grilla: Grilla) -> list[BarcoEnGrilla]:
     
     """
 
-    filas: int = len(grilla)
-    columnas: int = len(grilla[0])
-
     visitadas: list[Posición] = []
-    res: list[BarcoEnGrilla] = []
-
-    for f in range(filas):
-        for c in range(columnas):
-            posicion: Posición = indiceAPosicion(f,c) 
-            if celdaEnPosición(grilla, posicion) == BARCO and posicion not in visitadas:
-                barco: list[Posición] = construirBarcoDesdePosicion(grilla, posicion, visitadas)
-                res.append(barco)
+    barcos_por_ahora: list[BarcoEnGrilla] = []
 
 
-    return res
+    posicion_actual: Posición = primeraPosiciónEnGrilla(grilla)
+    quedan_posiciones_por_recorrer: bool =  True
+
+    while quedan_posiciones_por_recorrer:
+        if esUnBarcoNoVisitado(grilla, posicion_actual, visitadas):
+            barco_en_grilla: list[Posición] = barcoDesdePosicion(grilla, posicion_actual)
+            barcos_por_ahora.append(barco_en_grilla)
+            visitadas+=barco_en_grilla
+
+        if esLaÚltimaPosiciónEnGrilla(posicion_actual, grilla):
+            quedan_posiciones_por_recorrer = False
+        else:
+            posicion_actual = posiciónSiguienteEnGrilla(posicion_actual, grilla)
+
+
+    return barcos_por_ahora
 
     #Ejercicio 6
+def agregarPosiciones(listaPosiciones: list[Posición], barco_en_grilla: BarcoEnGrilla):
+    """
+    Agrega las posiciones de un barco a una lista dada.
+    """
+    for posicion_actual in barco_en_grilla:
+        listaPosiciones.append(posicion_actual)
 
 def posicionesDeBarcos(barcos: list[BarcoEnGrilla]) -> list[Posición]:
-    posiciones: list[Posición] = []
+    """
+    Devuelve una lista con todas las posiciones ocupadas por barcos.
+    """
+    posiciones_con_barco_por_ahora: list[Posición] = []
 
-    for barco in barcos:
-        for pos in barco:
-            posiciones.append(pos)
+    for barco_actual in barcos:
+        agregarPosiciones(posiciones_con_barco_por_ahora, barco_actual)
     
-    return posiciones
+    return posiciones_con_barco_por_ahora
 
 
 def todosLosBarcosDescubiertos(grillaJugadorOponente: Grilla, grillaOponenteLocal: Grilla) -> bool:
+    """
+    Indica si todos los barcos de una grilla fueron descubiertos en otra.
+    """
 
-    res = True
+    todos_descubiertos_por_ahora = True
     barcos_acertados: list[BarcoEnGrilla] = barcosEnGrilla(grillaJugadorOponente)
     barcos_totales: list[BarcoEnGrilla] = barcosEnGrilla(grillaOponenteLocal)
 
@@ -275,47 +311,60 @@ def todosLosBarcosDescubiertos(grillaJugadorOponente: Grilla, grillaOponenteLoca
     posiciones_de_barcos_totales: list[Posición] = posicionesDeBarcos(barcos_totales)
 
     
-    for pos_de_total in posiciones_de_barcos_totales:
-        if pos_de_total not in posiciones_de_barcos_acertados:
-            res = False
+    for posicion_actual in posiciones_de_barcos_totales:
+        if posicion_actual not in posiciones_de_barcos_acertados:
+            todos_descubiertos_por_ahora = False
     
-    return res
+    return todos_descubiertos_por_ahora
 
  
 def hayAgua(grillaLocalOponente: Grilla) -> bool:
-    res: bool = False
-    dimensiones_grilla: Dimensiones = dimensionesGrilla(grillaLocalOponente)
-    for fila in range(dimensiones_grilla[0]):
-        for colum in range(dimensiones_grilla[1]):
-            if grillaLocalOponente[fila][colum] == AGUA:
-                res = True
+    """
+    Realiza un recorrido por la grilla del oponente para verificar si alguno de los tiros haya dado en AGUA.
+    """
+    hay_agua_por_ahora: bool = False
+    posicion_actual: Posición = primeraPosiciónEnGrilla(grillaLocalOponente)
+    quedan_posiciones_por_recorrer: bool = True
+   
+    while quedan_posiciones_por_recorrer and not hay_agua_por_ahora:
+        if celdaEnPosición(grillaLocalOponente, posicion_actual) == AGUA:
+            hay_agua_por_ahora = True
 
-    return res        
+        if esLaÚltimaPosiciónEnGrilla(posicion_actual, grillaLocalOponente):
+            quedan_posiciones_por_recorrer = False
+        else:
+            posicion_actual = posiciónSiguienteEnGrilla(posicion_actual, grillaLocalOponente)
+
+    return hay_agua_por_ahora        
+
+def jugadorOponente(jugador: Jugador) -> Jugador:
+    """Devuelve el jugador oponente al jugador dado."""
+    return UNO if jugador == DOS else DOS
 
 def esJugadorPerfecto(estadoDeJuego: EstadoJuego, jugador: Jugador) -> bool:
-    tablero_jugador_UNO: Tablero = estadoDeJuego[3]
-    tablero_jugador_DOS: Tablero = estadoDeJuego[4]
-  
 
     """"
-    Para que sea jugador PERFECT, cumple:
-    si es jugador UNO, la grilla local está intacta, la grilla del oponente esta destruida
+    Indica si un jugador realizó una partida perfecta.
+    Un jugador es perfecto si:
+        - Descubrió todos los barcos del oponente.
+        - No hizo ningún disparo que haya dado en AGUA.
     """
-    if jugador == UNO:
-       a: bool = todosLosBarcosDescubiertos(tablero_jugador_UNO[1], tablero_jugador_DOS[0])
-       b: bool = hayAgua(tablero_jugador_UNO[1])
-    if jugador == DOS:
-       a: bool = todosLosBarcosDescubiertos(tablero_jugador_DOS[1], tablero_jugador_UNO[0])
-       b: bool = hayAgua(tablero_jugador_DOS[1])
+    
+    return todosLosBarcosDescubiertos(
+        grillaOponente(tableroDeJugador(estadoDeJuego,jugador)), 
+        grillaLocal(tableroDeJugador(estadoDeJuego,jugadorOponente(jugador)))
+    ) and not hayAgua(grillaOponente(tableroDeJugador(estadoDeJuego,jugador)))
 
-    return a and not b
 
 def hayJugadorPerfecto(estadoDeJuego: EstadoJuego) -> bool:
     """
-    indica si algun jugador encontro todos los barcos rivales sin hacer ningun disparo a la nada
-    pre:el estado de juego es valido
-    arg: un booleano = el jugador UNO o el jugador DOS hizo una partida perfecta
-    return True si hubo jugador perfecto False si no hubo
+    Indica si algún jugador realizó una partida perfecta.
+
+    Pre:
+        - estadoDeJuego es válido.
+    Post:
+        - Devuelve True si el jugador UNO o el jugador DOS realizaron una partida perfecta.
+        - Devuelve False si ninguno lo logró.
     """
 
     return esJugadorPerfecto(estadoDeJuego,UNO) or esJugadorPerfecto(estadoDeJuego, DOS)

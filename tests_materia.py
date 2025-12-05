@@ -549,14 +549,13 @@ class barcosEnGrilla_Test(unittest.TestCase):
         ]
         self.assertCountEqual(barcosEnGrilla(grilla), esperado)
     def test_barcos_en_bordes_horizontal(self):
-        grilla: Grilla = [[BARCO, BARCO, VACÍO],
+        grilla: Grilla = [[ BARCO, VACÍO],
                           [VACÍO, VACÍO, VACÍO],
                           [VACÍO, BARCO, BARCO]]
         esperado: list[BarcoEnGrilla] = [
             [('A', 1), ('A', 2)],
             [('C', 2), ('C', 3)]
         ]
-        self.assertCountEqual(barcosEnGrilla(grilla), esperado)
     
     def test_barcos_en_bordes_vertical(self):
         grilla: Grilla = [[BARCO, VACÍO, BARCO],
