@@ -549,13 +549,14 @@ class barcosEnGrilla_Test(unittest.TestCase):
         ]
         self.assertCountEqual(barcosEnGrilla(grilla), esperado)
     def test_barcos_en_bordes_horizontal(self):
-        grilla: Grilla = [[ BARCO, VACÍO],
+        grilla: Grilla = [[BARCO, BARCO, VACÍO],
                           [VACÍO, VACÍO, VACÍO],
                           [VACÍO, BARCO, BARCO]]
         esperado: list[BarcoEnGrilla] = [
             [('A', 1), ('A', 2)],
             [('C', 2), ('C', 3)]
         ]
+        self.assertCountEqual(barcosEnGrilla(grilla), esperado)
     
     def test_barcos_en_bordes_vertical(self):
         grilla: Grilla = [[BARCO, VACÍO, BARCO],
@@ -587,6 +588,130 @@ class barcosEnGrilla_Test(unittest.TestCase):
                                   [BARCO, VACÍO, VACÍO, VACÍO, VACÍO, VACÍO, VACÍO],
                                   [BARCO, VACÍO, BARCO, BARCO, VACÍO, BARCO, VACÍO],
                                   [VACÍO, VACÍO, VACÍO, VACÍO, VACÍO, BARCO, VACÍO]])
+
+
+# Tests Ejercicio 6
+class hayJugadorPerfecto_Test(unittest.TestCase):
+    def test_jugador_uno_es_jugador_perfecto(self):
+        
+        grillaUnoLocal = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                          [BARCO, VACÍO, VACÍO, VACÍO],
+                          [BARCO, VACÍO, VACÍO, VACÍO],
+                          [VACÍO, BARCO, BARCO, VACÍO]]
+        
+        grillaUnoOponente = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                             [VACÍO, VACÍO, VACÍO, VACÍO],
+                             [BARCO, VACÍO, BARCO, BARCO],
+                             [BARCO, VACÍO, VACÍO, VACÍO]]
+        
+        grillaDosLocal = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                          [VACÍO, VACÍO, VACÍO, VACÍO],
+                          [BARCO, VACÍO, BARCO, BARCO],
+                          [BARCO, VACÍO, VACÍO, VACÍO]]
+        
+        grillaDosOponente = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                             [VACÍO, VACÍO, VACÍO, VACÍO],
+                             [VACÍO, VACÍO, VACÍO, VACÍO],
+                             [VACÍO, VACÍO, VACÍO, VACÍO]]
+        estadoDeJuego: EstadoJuego = ((4,4), [2,2], [DOS], (grillaUnoLocal, grillaUnoOponente), (grillaDosLocal, grillaDosOponente))
+        self.assertTrue(hayJugadorPerfecto(estadoDeJuego))
+
+    def test_jugador_dos_es_jugador_perfecto(self):
+        
+        grillaUnoLocal = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                          [BARCO, VACÍO, VACÍO, VACÍO],
+                          [BARCO, VACÍO, VACÍO, VACÍO],
+                          [VACÍO, BARCO, BARCO, VACÍO]]
+        
+        grillaUnoOponente = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                             [VACÍO, VACÍO, VACÍO, VACÍO],
+                             [BARCO, VACÍO, VACÍO, BARCO],
+                             [BARCO, VACÍO, VACÍO, VACÍO]]
+        
+        grillaDosLocal = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                          [VACÍO, VACÍO, VACÍO, VACÍO],
+                          [BARCO, VACÍO, BARCO, BARCO],
+                          [BARCO, VACÍO, VACÍO, VACÍO]]
+        
+        grillaDosOponente = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                             [BARCO, VACÍO, VACÍO, VACÍO],
+                             [BARCO, VACÍO, VACÍO, VACÍO],
+                             [VACÍO, BARCO, BARCO, VACÍO]]
+        estadoDeJuego: EstadoJuego = ((4,4), [2,2], [DOS], (grillaUnoLocal, grillaUnoOponente), (grillaDosLocal, grillaDosOponente))
+        self.assertTrue(hayJugadorPerfecto(estadoDeJuego))
+
+    def test_jugador_dos_tiene_agua(self):
+        
+        grillaUnoLocal = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                          [BARCO, VACÍO, VACÍO, VACÍO],
+                          [BARCO, VACÍO, VACÍO, VACÍO],
+                          [VACÍO, BARCO, BARCO, AGUA]]
+        
+        grillaUnoOponente = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                             [VACÍO, VACÍO, VACÍO, VACÍO],
+                             [BARCO, VACÍO, VACÍO, BARCO],
+                             [BARCO, VACÍO, VACÍO, VACÍO]]
+        
+        grillaDosLocal = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                          [VACÍO, VACÍO, VACÍO, VACÍO],
+                          [BARCO, VACÍO, BARCO, BARCO],
+                          [BARCO, VACÍO, VACÍO, VACÍO]]
+        
+        grillaDosOponente = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                             [BARCO, VACÍO, VACÍO, VACÍO],
+                             [BARCO, VACÍO, VACÍO, VACÍO],
+                             [VACÍO, BARCO, BARCO, AGUA]]
+        estadoDeJuego: EstadoJuego = ((4,4), [2,2], [DOS], (grillaUnoLocal, grillaUnoOponente), (grillaDosLocal, grillaDosOponente))
+        self.assertFalse(hayJugadorPerfecto(estadoDeJuego))
+
+    def test_jugador_uno_tiene_agua(self):
+        
+        grillaUnoLocal = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                          [BARCO, VACÍO, VACÍO, VACÍO],
+                          [BARCO, VACÍO, VACÍO, VACÍO],
+                          [VACÍO, BARCO, BARCO, VACÍO]]
+        
+        grillaUnoOponente = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                             [VACÍO, VACÍO, VACÍO, VACÍO],
+                             [BARCO, VACÍO, BARCO, BARCO],
+                             [BARCO, VACÍO, AGUA, VACÍO]]
+        
+        grillaDosLocal = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                          [VACÍO, VACÍO, VACÍO, VACÍO],
+                          [BARCO, VACÍO, BARCO, BARCO],
+                          [BARCO, VACÍO, VACÍO, VACÍO]]
+        
+        grillaDosOponente = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                             [VACÍO, VACÍO, VACÍO, VACÍO],
+                             [VACÍO, VACÍO, VACÍO, VACÍO],
+                             [VACÍO, VACÍO, VACÍO, VACÍO]]
+        estadoDeJuego: EstadoJuego = ((4,4), [2,2], [DOS], (grillaUnoLocal, grillaUnoOponente), (grillaDosLocal, grillaDosOponente))
+        self.assertFalse(hayJugadorPerfecto(estadoDeJuego))
+
+    def no_hay_jugador_perfecto(self):
+        
+        grillaUnoLocal = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                          [BARCO, VACÍO, VACÍO, VACÍO],
+                          [BARCO, VACÍO, VACÍO, VACÍO],
+                          [VACÍO, BARCO, BARCO, VACÍO]]
+        
+        grillaUnoOponente = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                             [VACÍO, VACÍO, VACÍO, VACÍO],
+                             [VACÍO, VACÍO, VACÍO, VACÍO],
+                             [VACÍO, VACÍO, VACÍO, VACÍO]]
+        
+        grillaDosLocal = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                          [VACÍO, VACÍO, VACÍO, VACÍO],
+                          [BARCO, VACÍO, BARCO, BARCO],
+                          [BARCO, VACÍO, VACÍO, VACÍO]]
+        
+        grillaDosOponente = [[VACÍO, VACÍO, VACÍO, VACÍO],
+                             [VACÍO, VACÍO, VACÍO, VACÍO],
+                             [VACÍO, VACÍO, VACÍO, VACÍO],
+                             [VACÍO, VACÍO, VACÍO, VACÍO]]
+        estadoDeJuego: EstadoJuego = ((4,4), [2,2], [DOS], (grillaUnoLocal, grillaUnoOponente), (grillaDosLocal, grillaDosOponente))
+        self.assertFalse(hayJugadorPerfecto(estadoDeJuego))
+
 
 
 
