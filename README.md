@@ -21,7 +21,7 @@ En cada turno, un jugador lanza un torpedo a una posición del tablero enemigo, 
 
 ## Estado de la reconstrucción
 
-Esta copia conserva la historia existente del repositorio y agrega una reparación aislada en `codex/batalla-naval-repair`. La corrección declara el `TypeVar` utilizado por `batallaNavalCorregido.py`, que impedía importar esa variante histórica.
+Esta copia conserva la historia existente del repositorio y publica la versión validada en la rama `version-validada-batalla-naval`. La corrección declara el `TypeVar` utilizado por `batallaNavalCorregido.py`, que impedía importar esa variante histórica.
 
 Validación realizada con Python 3.12 del entorno de trabajo:
 
@@ -29,7 +29,7 @@ Validación realizada con Python 3.12 del entorno de trabajo:
 - `batallaNavalCorregido` importa correctamente.
 - La verificación de sintaxis y `git diff --check` pasan.
 
-La rama no reemplaza `main`; debe revisarse antes de fusionar.
+La rama documenta la versión validada y se mantiene separada de `main` hasta completar su revisión.
 
 ---
 
