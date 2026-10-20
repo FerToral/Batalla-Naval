@@ -87,17 +87,13 @@ def esEstadoDeJuegoVálido(estadoDeJuego: EstadoJuego) -> bool:
     cantidad_de_columnas_del_estado_de_juego_validas = cantidadDeColumnasEstadoJuego(estadoDeJuego) > 0
     solo_hay_una_lista_en_turno = len(estadoDeJuego[2]) == 1
     hay_al_menos_un_barco_disponible = len(barcosDisponibles(estadoDeJuego)) > 0
-    tablero_del_jugador_UNO_Válido = tableroVálidoEnJuego(tableroDeJugador(estadoDeJuego,UNO),estadoDeJuego)
-    tablero_del_jugador_DOS_Válido = tableroVálidoEnJuego(tableroDeJugador(estadoDeJuego,DOS),estadoDeJuego)
-    coniciden_las_posiciones_atacadas_en_las_grillas_opuestas = coincidenPosicionesAtacadas(tableroDeJugador(estadoDeJuego,UNO),tableroDeJugador(estadoDeJuego,DOS))
-
     return (cantidad_de_filas_del_estado_de_juego_validas 
             and cantidad_de_columnas_del_estado_de_juego_validas 
             and solo_hay_una_lista_en_turno 
             and hay_al_menos_un_barco_disponible 
-            and tablero_del_jugador_UNO_Válido 
-            and tablero_del_jugador_DOS_Válido 
-            and coniciden_las_posiciones_atacadas_en_las_grillas_opuestas)
+            and tableroVálidoEnJuego(tableroDeJugador(estadoDeJuego,UNO),estadoDeJuego)
+            and tableroVálidoEnJuego(tableroDeJugador(estadoDeJuego,DOS),estadoDeJuego)
+            and coincidenPosicionesAtacadas(tableroDeJugador(estadoDeJuego,UNO),tableroDeJugador(estadoDeJuego,DOS)))
 
 def tableroVálidoEnJuego(tablero:Tablero,estadoDeJuego:EstadoJuego) -> bool:
     return grillaVálidaEnJuego(grillaLocal(tablero),estadoDeJuego) and grillaVálidaEnJuego(grillaOponente(tablero),estadoDeJuego) and coincidenBarcosEnGrilla(barcosDisponibles(estadoDeJuego),grillaLocal(tablero))
@@ -130,7 +126,17 @@ def coincidenPosicionesAtacadas(tablero:Tablero,tableroOponente:Tablero) -> bool
         res = res and coincidenPosicionesAtacadasEnCadaFila(tablero,tableroOponente,fila)
     for fila in range (len(tableroOponente[1])):
         res = res and coincidenPosicionesAtacadasEnCadaFila(tableroOponente,tablero,fila)
-    return res
+    diferencia_de_ataques: int = cantidadDePosicionesAtacadas(grillaOponente(tablero)) - cantidadDePosicionesAtacadas(grillaOponente(tableroOponente))
+    return res and 0 <= diferencia_de_ataques <= 1
+
+
+def cantidadDePosicionesAtacadas(grilla: Grilla) -> int:
+    """Cuenta las celdas marcadas por disparos en una grilla válida."""
+    cantidad: int = 0
+    for fila in grilla:
+        for celda in fila:
+            cantidad += unoSiCeroSiNo(celda != VACÍO)
+    return cantidad
 
 def coincidenPosicionesAtacadasEnCadaFila(tablero:Tablero,tableroOponente:Tablero,fila) -> bool:
     res = True

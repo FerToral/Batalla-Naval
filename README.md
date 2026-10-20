@@ -1,42 +1,57 @@
-# 🚢 Batalla Naval — Trabajo Práctico de Programación Imperativa
+# Batalla Naval · Introducción a la Programación
 
-## 🧩 Introducción
+Trabajo práctico de programación imperativa de **UBA Exactas, segundo cuatrimestre de 2025**. Implementación en Python, con biblioteca e interfaz Tkinter provistas para el ejercicio y soluciones históricas conservadas.
 
-El objetivo de este **Trabajo Práctico** es aplicar los conceptos de **programación imperativa** vistos en la materia para resolver ejercicios utilizando el lenguaje de programación **Python**.
+## Recorrido del TP
 
-El trabajo consiste en implementar el clásico juego **Batalla Naval**.  
-Para quienes no lo conozcan, es un juego de mesa para dos jugadores, donde cada uno posee una flota de barcos ubicada en un tablero propio.  
-El objetivo es **hundir todos los barcos del oponente** antes de que este haga lo mismo.  
+| Ejercicio | Tema | Archivo activo |
+|---|---|---|
+| 1 | Cantidad de barcos según tamaño | batallaNaval.py |
+| 2 | Construcción de un juego y sus grillas | batallaNaval.py |
+| 3 | Validez y consistencia de un estado | batallaNaval.py |
+| 4 | Disparo y cambio de turno | batallaNaval.py |
+| 5 | Reconocimiento de barcos en una grilla | batallaNaval.py |
+| 6 | Jugador perfecto | batallaNaval.py |
 
-En cada turno, un jugador lanza un torpedo a una posición del tablero enemigo, y el oponente debe responder si el disparo **impactó** en alguno de sus barcos o **falló**.
+La [consigna y sus diferencias de versión](docs/CONSIGNA.md) contextualizan los ejercicios. No se incluyen copias docentes sin permiso de redistribución.
 
----
+## Ejecutar
 
-## ⚙️ Tecnologí utilizadas
+Python 3.10 o posterior; comprobado con Python 3.12. La interfaz requiere Tkinter:
 
-- **Lenguaje:** Python 🐍  
-- **Paradigma:** Programación imperativa  
-- **Entorno recomendado:** Visual Studio Code / Terminal con Python 3.10+  
-- **Control de versiones:** Git y GitLab  
+```sh
+python interfaz_batalla_naval.py
+```
 
-## Estado de la reconstrucción
+La interfaz es la del ejercicio académico, no una implementación completa de todas las reglas comerciales de Batalla Naval. No se modificaron biblioteca.py ni la interfaz en esta revisión.
 
-Esta copia conserva la historia existente del repositorio y publica la versión validada en la rama `version-validada-batalla-naval`. La corrección declara el `TypeVar` utilizado por `batallaNavalCorregido.py`, que impedía importar esa variante histórica.
+## Pruebas
 
-Validación realizada con Python 3.12 del entorno de trabajo:
+```sh
+python -m unittest tests_materia test_regresiones -v
+```
 
-- 28/28 tests de `tests_materia.py` pasan.
-- `batallaNavalCorregido` importa correctamente.
-- La verificación de sintaxis y `git diff --check` pasan.
+**45 pruebas pasan:** 28 históricas y 17 regresiones nuevas. Se comprueban los últimos ejercicios, inmutabilidad, independencia de grillas, posiciones límite, resultado exacto de múltiples barcos y validación de estados mal dimensionados.
 
-La rama documenta la versión validada y se mantiene separada de `main` hasta completar su revisión.
+Las nuevas regresiones reprodujeron dos excepciones del validador antes de la corrección. Ahora se valida la estructura antes de comparar posiciones entre tableros. No se alteraron las expectativas del archivo histórico para hacer pasar el código.
 
----
+Para medir cobertura:
 
-## 🚀 Ejecución del proyecto
+```sh
+python -m pip install -r requirements-dev.txt
+python -m coverage run --branch --source=batallaNaval -m unittest tests_materia test_regresiones
+python -m coverage report
+```
 
-1. Clonar este repositorio:
+Última medición: **162/162 líneas ejecutables (100 %) y 54/54 ramas (100 %)** en batallaNaval.py. La cobertura alta no demuestra por sí sola concordancia completa con la especificación.
 
-   ```bash
-   git clone https://gitlab.com/dino_code/FerToral-project.git
-   cd FerToral-project
+## Estructura y versiones
+
+- batallaNaval.py: implementación usada por la interfaz y las pruebas.
+- batallaNavalCorregido.py: variante histórica, conservada como referencia; no sustituye silenciosamente al archivo activo.
+- biblioteca.py e interfaz_batalla_naval.py: auxiliares del trabajo.
+- tests_materia.py: pruebas históricas conservadas.
+- test_regresiones.py: comprobaciones adicionales de mantenimiento.
+- docs/CONSIGNA.md: fuente académica, mapa y discrepancias pendientes.
+
+Historia original en [GitLab](https://gitlab.com/dino_code/FerToral-project). La rama de revisión en GitHub preserva sus commits. No se considera aprobación docente ni cierre completo mientras la diferencia de contrato del último ejercicio no estén reconciliadas.
