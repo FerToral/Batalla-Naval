@@ -1,5 +1,7 @@
-from typing import Any
+from typing import Any, TypeVar
 from biblioteca import *
+
+T = TypeVar("T")
 
 ## Ejercicio 1
 

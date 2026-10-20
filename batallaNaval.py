@@ -5,16 +5,16 @@ from biblioteca import *
 
 
 def cantidadDeBarcosDeTamaño(barcos: list[BarcoEnGrilla], tamaño: int) -> int:
-    """ 
+    """
         Devuelve la cantidad de barcos de un tamaño dado dentro de la lista de barcos en una grilla.
 
         Pre: La lista barcos contiene solamente barcos validos
 
         Argumentos: barcos: Lista de Barcos que estan en la grilla (son representados a través de las posiciones que tienen en la grilla)
-              tamaño: tamaño/posiciones que tiene un barco en la grilla 
+              tamaño: tamaño/posiciones que tiene un barco en la grilla
         Post: Regresa la cantidad de barcos que tienen el tamaño especificado en el paramatro de la función
 
-        
+
     """
 
     cantidadBarcos: int = 0
@@ -54,15 +54,15 @@ def nuevoJuego(
     Post:
         - Devuelve un EstadoJuego donde ambos tableros están vacíos.
         - La lista de barcos en juego es una copia de `barcosDisponibles`.
-    
+
 
     """
 
     nuevo_juego: EstadoJuego = (
-        (cantidadDeFilas, cantidadDeColumnas), 
-        barcosDisponibles.copy(), 
+        (cantidadDeFilas, cantidadDeColumnas),
+        barcosDisponibles.copy(),
         jugadorQueEmpieza(),
-        armadoDeTablero(cantidadDeFilas, cantidadDeColumnas), 
+        armadoDeTablero(cantidadDeFilas, cantidadDeColumnas),
         armadoDeTablero(cantidadDeFilas, cantidadDeColumnas)
     )
 
@@ -87,17 +87,13 @@ def esEstadoDeJuegoVálido(estadoDeJuego: EstadoJuego) -> bool:
     cantidad_de_columnas_del_estado_de_juego_validas = cantidadDeColumnasEstadoJuego(estadoDeJuego) > 0
     solo_hay_una_lista_en_turno = len(estadoDeJuego[2]) == 1
     hay_al_menos_un_barco_disponible = len(barcosDisponibles(estadoDeJuego)) > 0
-    tablero_del_jugador_UNO_Válido = tableroVálidoEnJuego(tableroDeJugador(estadoDeJuego,UNO),estadoDeJuego)
-    tablero_del_jugador_DOS_Válido = tableroVálidoEnJuego(tableroDeJugador(estadoDeJuego,DOS),estadoDeJuego)
-    coniciden_las_posiciones_atacadas_en_las_grillas_opuestas = coincidenPosicionesAtacadas(tableroDeJugador(estadoDeJuego,UNO),tableroDeJugador(estadoDeJuego,DOS))
-
-    return (cantidad_de_filas_del_estado_de_juego_validas 
-            and cantidad_de_columnas_del_estado_de_juego_validas 
-            and solo_hay_una_lista_en_turno 
-            and hay_al_menos_un_barco_disponible 
-            and tablero_del_jugador_UNO_Válido 
-            and tablero_del_jugador_DOS_Válido 
-            and coniciden_las_posiciones_atacadas_en_las_grillas_opuestas)
+    return (cantidad_de_filas_del_estado_de_juego_validas
+            and cantidad_de_columnas_del_estado_de_juego_validas
+            and solo_hay_una_lista_en_turno
+            and hay_al_menos_un_barco_disponible
+            and tableroVálidoEnJuego(tableroDeJugador(estadoDeJuego,UNO),estadoDeJuego)
+            and tableroVálidoEnJuego(tableroDeJugador(estadoDeJuego,DOS),estadoDeJuego)
+            and coincidenPosicionesAtacadas(tableroDeJugador(estadoDeJuego,UNO),tableroDeJugador(estadoDeJuego,DOS)))
 
 def tableroVálidoEnJuego(tablero:Tablero,estadoDeJuego:EstadoJuego) -> bool:
     return grillaVálidaEnJuego(grillaLocal(tablero),estadoDeJuego) and grillaVálidaEnJuego(grillaOponente(tablero),estadoDeJuego) and coincidenBarcosEnGrilla(barcosDisponibles(estadoDeJuego),grillaLocal(tablero))
@@ -130,7 +126,17 @@ def coincidenPosicionesAtacadas(tablero:Tablero,tableroOponente:Tablero) -> bool
         res = res and coincidenPosicionesAtacadasEnCadaFila(tablero,tableroOponente,fila)
     for fila in range (len(tableroOponente[1])):
         res = res and coincidenPosicionesAtacadasEnCadaFila(tableroOponente,tablero,fila)
-    return res
+    diferencia_de_ataques: int = cantidadDePosicionesAtacadas(grillaOponente(tablero)) - cantidadDePosicionesAtacadas(grillaOponente(tableroOponente))
+    return res and 0 <= diferencia_de_ataques <= 1
+
+
+def cantidadDePosicionesAtacadas(grilla: Grilla) -> int:
+    """Cuenta las celdas marcadas por disparos en una grilla válida."""
+    cantidad: int = 0
+    for fila in grilla:
+        for celda in fila:
+            cantidad += unoSiCeroSiNo(celda != VACÍO)
+    return cantidad
 
 def coincidenPosicionesAtacadasEnCadaFila(tablero:Tablero,tableroOponente:Tablero,fila) -> bool:
     res = True
@@ -182,14 +188,14 @@ def dispararEnPosición(estado_juego: EstadoJuego, posición: Posición) -> Resu
     else:
         nuevoEstadoDeJuegoSiDisparoAlBarco(estado_juego,posición)
         res = TOCADO
-    return res 
+    return res
 
 def nuevoEstadoDeJuegoSiDisparoHaceAgua(estado_juego:EstadoJuego,posición: Posición) -> ResultadoDisparo:
     cambiarCeldaGrilla(grillaLocal(tableroDeJugador(estado_juego, contrario(turno(estado_juego)))), posición, AGUA)
     cambiarCeldaGrilla(grillaOponente(tableroDeJugador(estado_juego, turno(estado_juego))), posición, AGUA)
     cambiarTurno(estado_juego)
     return estado_juego
-    
+
 def nuevoEstadoDeJuegoSiDisparoAlBarco(estado_juego:EstadoJuego,posición: Posición) -> ResultadoDisparo:
     cambiarCeldaGrilla(grillaOponente(tableroDeJugador(estado_juego, turno(estado_juego))), posición, BARCO)
     cambiarTurno(estado_juego)
@@ -208,7 +214,7 @@ def indiceAPosicion(fila: int, columna: int) -> Posición:
 
 def agregarBarcoEn(grilla: Grilla, desde: Posición, direccion: Dirección,
                      barco_actual: list[Posición]) -> None:
-    
+
     posicion_actual: Posición = desde
 
     while hayBarcoAl(grilla, posicion_actual, direccion):
@@ -217,7 +223,7 @@ def agregarBarcoEn(grilla: Grilla, desde: Posición, direccion: Dirección,
 
 
 def  barcoDesdePosicion(grilla: Grilla, inicio: Posición) -> list[Posición]:
-    
+
     barco_actual: list[Posición] = []
     barco_actual.append(inicio)
 
@@ -231,7 +237,7 @@ def  barcoDesdePosicion(grilla: Grilla, inicio: Posición) -> list[Posición]:
 
 def esUnBarcoNoVisitado(grilla, posicionActual, visitadas) -> bool:
     return celdaEnPosición(grilla, posicionActual) == BARCO and posicionActual not in visitadas
-    
+
 
 def barcosEnGrilla(grilla: Grilla) -> list[BarcoEnGrilla]:
     """
@@ -249,12 +255,12 @@ def barcosEnGrilla(grilla: Grilla) -> list[BarcoEnGrilla]:
     Post:
         - Devuelve una lista de BarcoEnGrilla, donde cada BarcoEnGrilla es una lista de Posición
           que representa las celdas que ocupa un barco en la *grilla*.
-        
+
         - La unión de todas las posiciones devueltas es exactamente el conjunto de posiciones de
           la grilla cuya celda es BARCO
         - No hay solapamiento (ninguna posición aparece en más de un barco)
         - Cada barco contiene posiciones contiguas y ordenadas en la dirección del barco (direcciones rectas arriba, abajo, derecha e izquierda)
-    
+
     """
 
     visitadas: list[Posición] = []
@@ -294,13 +300,29 @@ def posicionesDeBarcos(barcos: list[BarcoEnGrilla]) -> list[Posición]:
 
     for barco_actual in barcos:
         agregarPosiciones(posiciones_con_barco_por_ahora, barco_actual)
-    
+
     return posiciones_con_barco_por_ahora
 
 
 def todosLosBarcosDescubiertos(grillaJugadorOponente: Grilla, grillaOponenteLocal: Grilla) -> bool:
+    """Ej.6 TN: al menos una posición descubierta por cada barco, no hundido."""
+    for barco in barcosEnGrilla(grillaOponenteLocal):
+        if not barcoDescubiertoEn(barco,grillaJugadorOponente):
+            return False
+    return True
+
+
+def barcoDescubiertoEn(barco: BarcoEnGrilla, grilla: Grilla) -> bool:
+    """Interpretación existencial del auxiliar formal, página 22 del PDF TN."""
+    for posicion in barco:
+        if celdaEnPosición(grilla,posicion) != VACÍO:
+            return True
+    return False
+
+
+def todosLosBarcosHundidos(grillaJugadorOponente: Grilla, grillaOponenteLocal: Grilla) -> bool:
     """
-    Indica si todos los barcos de una grilla fueron descubiertos en otra.
+    Regla histórica de victoria: todas las posiciones de cada barco acertadas.
     """
 
     todos_descubiertos_por_ahora = True
@@ -310,14 +332,14 @@ def todosLosBarcosDescubiertos(grillaJugadorOponente: Grilla, grillaOponenteLoca
     posiciones_de_barcos_acertados: list[Posición] = posicionesDeBarcos(barcos_acertados)
     posiciones_de_barcos_totales: list[Posición] = posicionesDeBarcos(barcos_totales)
 
-    
+
     for posicion_actual in posiciones_de_barcos_totales:
         if posicion_actual not in posiciones_de_barcos_acertados:
             todos_descubiertos_por_ahora = False
-    
+
     return todos_descubiertos_por_ahora
 
- 
+
 def hayAgua(grillaLocalOponente: Grilla) -> bool:
     """
     Realiza un recorrido por la grilla del oponente para verificar si alguno de los tiros haya dado en AGUA.
@@ -325,7 +347,7 @@ def hayAgua(grillaLocalOponente: Grilla) -> bool:
     hay_agua_por_ahora: bool = False
     posicion_actual: Posición = primeraPosiciónEnGrilla(grillaLocalOponente)
     quedan_posiciones_por_recorrer: bool = True
-   
+
     while quedan_posiciones_por_recorrer and not hay_agua_por_ahora:
         if celdaEnPosición(grillaLocalOponente, posicion_actual) == AGUA:
             hay_agua_por_ahora = True
@@ -335,7 +357,7 @@ def hayAgua(grillaLocalOponente: Grilla) -> bool:
         else:
             posicion_actual = posiciónSiguienteEnGrilla(posicion_actual, grillaLocalOponente)
 
-    return hay_agua_por_ahora        
+    return hay_agua_por_ahora
 
 def jugadorOponente(jugador: Jugador) -> Jugador:
     """Devuelve el jugador oponente al jugador dado."""
@@ -349,9 +371,9 @@ def esJugadorPerfecto(estadoDeJuego: EstadoJuego, jugador: Jugador) -> bool:
         - Descubrió todos los barcos del oponente.
         - No hizo ningún disparo que haya dado en AGUA.
     """
-    
+
     return todosLosBarcosDescubiertos(
-        grillaOponente(tableroDeJugador(estadoDeJuego,jugador)), 
+        grillaOponente(tableroDeJugador(estadoDeJuego,jugador)),
         grillaLocal(tableroDeJugador(estadoDeJuego,jugadorOponente(jugador)))
     ) and not hayAgua(grillaOponente(tableroDeJugador(estadoDeJuego,jugador)))
 
