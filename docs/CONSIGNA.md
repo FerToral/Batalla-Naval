@@ -38,4 +38,12 @@ El enunciado base de 21 páginas tiene SHA-256 7f8514af346c3e0c529f72cfff3f2e578
 
 Las funciones mantienen sus nombres académicos, las soluciones históricas y auxiliares permanecen en Git. La revisión agrega pruebas y una validación por cortocircuito; no reescribe el ejercicio con herramientas ajenas a su nivel. biblioteca.py y la interfaz no se modificaron.
 
-Los porcentajes de cobertura corresponden al archivo activo, no a la interfaz ni a todos los auxiliares docentes. La GUI aún necesita una prueba interactiva específica.
+Los porcentajes de cobertura corresponden al archivo activo, no a la
+interfaz ni a todos los auxiliares docentes. Cuatro pruebas adicionales
+ejecutan el controlador sin abrir ventanas: cierre tras el impacto final,
+alternancia, detección del ganador y disparos de PC sin repetición.
+La GUI aún necesita una revisión visual interactiva específica.
+
+El cierre de interfaz usa barcos hundidos; no cambia el contrato del
+ejercicio 6 sobre jugador perfecto. La discrepancia descubrir/hundir
+sigue explícita, sin mezclar la ampliación de otra variante del TP.

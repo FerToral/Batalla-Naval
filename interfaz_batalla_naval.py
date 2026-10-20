@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import random
-from batallaNaval import (nuevoJuego, dispararEnPosición)
+from batallaNaval import (nuevoJuego, dispararEnPosición, todosLosBarcosDescubiertos)
 from biblioteca import *
 
 
@@ -191,7 +191,7 @@ class InterfazBatallaNaval:
                     text=texto,
                     fg=fg,
                     bg=bg,
-                    state="normal"
+                    state="disabled" if self.ganador() is not None else "normal"
                 )
 
         # Actualizar información del juego
@@ -210,6 +210,8 @@ class InterfazBatallaNaval:
 
     def manejar_disparo(self, fila: int, columna: int):
         """Maneja el evento de disparo en una celda de la grilla oponente"""
+        if self.ganador() is not None:
+            return
         
         grilla_oponente: Grilla = grillaOponente(tableroDeJugador(self.estado_juego, turno(self.estado_juego)))
         posición: Posición = (chr(ord('A') + fila), (columna + 1))
@@ -217,8 +219,12 @@ class InterfazBatallaNaval:
             return
 
         self.ManejarDisparo((chr(ord('A') + fila), (columna + 1)))
-        self.ManejarDisparo(self.disparoPC())
+        # No ejecutar el turno de la PC después del impacto que cerró la partida.
+        if self.ganador() is None:
+            self.ManejarDisparo(self.disparoPC())
         self.actualizar_interfaz()
+        if self.ganador() is not None:
+            messagebox.showinfo("Partida finalizada", "Ganó el jugador " + self.ganador().value)
 
     def ManejarDisparo(self, posición):
         resultado_disparo: ResultadoDisparo = dispararEnPosición(self.estado_juego, posición)
@@ -229,19 +235,33 @@ class InterfazBatallaNaval:
           f"{'Impacto' if resultado_disparo == ResultadoDisparo.TOCADO else 'Agua'} en {coordenada}!"
         )
 
+    def ganador(self):
+        """Cierre de interfaz por barcos hundidos; no cambia el contrato del Ej.6."""
+        for jugador in (UNO, DOS):
+            oponente = DOS if jugador == UNO else UNO
+            local_rival = grillaLocal(tableroDeJugador(self.estado_juego, oponente))
+            descubierta = grillaOponente(tableroDeJugador(self.estado_juego, jugador))
+            if todosLosBarcosDescubiertos(descubierta, local_rival):
+                return jugador
+        return None
+
     def disparoPC(self):
-        if len(self.disparosPC) == 0:
-          disparoAleatorio = (chr(ord('A') + random.randint(1,cantidadDeFilasEstadoJuego(self.estado_juego))-1), random.randint(1,cantidadDeColumnasEstadoJuego(self.estado_juego)))
-          self.disparosPC.append(disparoAleatorio)
-          return disparoAleatorio
-        primerDisparo = primeraPosiciónEnGrilla(grillaLocal(tableroDeJugador(self.estado_juego, turno(self.estado_juego))))
-        ultimoDisparo = self.disparosPC[-1]
-        if esLaÚltimaPosiciónEnGrilla(ultimoDisparo, grillaLocal(tableroDeJugador(self.estado_juego, turno(self.estado_juego)))):
-          self.disparosPC.append(primerDisparo)
-          return primerDisparo
-        proximoDisparo = posiciónSiguienteEnGrilla(ultimoDisparo, grillaLocal(tableroDeJugador(self.estado_juego, turno(self.estado_juego))))
-        self.disparosPC.append(proximoDisparo)
-        return proximoDisparo
+        posiciones = [
+            (chr(ord('A') + fila), columna + 1)
+            for fila in range(cantidadDeFilasEstadoJuego(self.estado_juego))
+            for columna in range(cantidadDeColumnasEstadoJuego(self.estado_juego))
+        ]
+        disponibles = [posicion for posicion in posiciones if posicion not in self.disparosPC]
+        if not disponibles:
+            raise ValueError("No quedan posiciones sin atacar")
+        if not self.disparosPC:
+            siguiente = random.choice(disponibles)
+        else:
+            inicio = (posiciones.index(self.disparosPC[-1]) + 1) % len(posiciones)
+            orden = posiciones[inicio:] + posiciones[:inicio]
+            siguiente = next(posicion for posicion in orden if posicion in disponibles)
+        self.disparosPC.append(siguiente)
+        return siguiente
 
 
     def actualizar_informacion(self):

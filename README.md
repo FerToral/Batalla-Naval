@@ -23,15 +23,22 @@ Python 3.10 o posterior; comprobado con Python 3.12. La interfaz requiere Tkinte
 python interfaz_batalla_naval.py
 ```
 
-La interfaz es la del ejercicio académico, no una implementación completa de todas las reglas comerciales de Batalla Naval. No se modificaron biblioteca.py ni la interfaz en esta revisión.
+La interfaz es la del ejercicio académico, no todas las reglas comerciales
+de Batalla Naval. La revisión evita disparos de la PC después del impacto
+ganador, bloquea jugadas tras el cierre y evita repetir ataques.
+biblioteca.py permanece intacta.
 
 ## Pruebas
 
 ```sh
-python -m unittest tests_materia test_regresiones -v
+python -m unittest tests_materia test_regresiones test_interfaz -v
 ```
 
-**45 pruebas pasan:** 28 históricas y 17 regresiones nuevas. Se comprueban los últimos ejercicios, inmutabilidad, independencia de grillas, posiciones límite, resultado exacto de múltiples barcos y validación de estados mal dimensionados.
+**49 pruebas pasan:** 28 históricas, 17 regresiones del núcleo y cuatro
+del controlador de interfaz. Estas últimas no abren ventanas: comprueban
+disparos únicos, alternancia y cierre de partida con diálogos simulados.
+No son una revisión visual de Tkinter. Se mantienen las comprobaciones
+de últimos ejercicios, inmutabilidad y estados mal dimensionados.
 
 Las nuevas regresiones reprodujeron dos excepciones del validador antes de la corrección. Ahora se valida la estructura antes de comparar posiciones entre tableros. No se alteraron las expectativas del archivo histórico para hacer pasar el código.
 
@@ -52,6 +59,7 @@ python -m coverage report
 - biblioteca.py e interfaz_batalla_naval.py: auxiliares del trabajo.
 - tests_materia.py: pruebas históricas conservadas.
 - test_regresiones.py: comprobaciones adicionales de mantenimiento.
+- test_interfaz.py: controlador sin ventana ni datos reales.
 - docs/CONSIGNA.md: fuente académica, mapa y discrepancias pendientes.
 
 Historia original en [GitLab](https://gitlab.com/dino_code/FerToral-project). La rama de revisión en GitHub preserva sus commits. No se considera aprobación docente ni cierre completo mientras la diferencia de contrato del último ejercicio no estén reconciliadas.
