@@ -38,7 +38,7 @@ python -m unittest tests_materia test_regresiones test_interfaz -v
 reconciliada y contraste de su resultado anterior), 19 regresiones del núcleo y cuatro
 del controlador de interfaz. Estas últimas no abren ventanas: comprueban
 disparos únicos, alternancia y cierre de partida con diálogos simulados.
-No son una revisión visual de Tkinter. Se mantienen las comprobaciones
+Estas pruebas no sustituyen una revisión visual de Tkinter. Se mantienen las comprobaciones
 de últimos ejercicios, inmutabilidad y estados mal dimensionados.
 
 Las regresiones reprodujeron dos excepciones del validador antes de la
@@ -73,5 +73,10 @@ sola aprobación docente ni revisión visual del programa.
 Historia original en [GitLab](https://gitlab.com/dino_code/FerToral-project).
 La rama de revisión en GitHub preserva sus commits. El contrato de los
 seis ejercicios queda revisado respecto del PDF TN recuperado; esto no
-es una aprobación docente. La revisión visual interactiva de Tkinter
-sigue separada de las comprobaciones automáticas del controlador.
+es una aprobación docente.
+
+La revisión nativa en Windows comprobó las dos grillas completas, sus
+coordenadas, un impacto de UNO, la respuesta de la PC, ambos diálogos y
+el retorno a UNO con las marcas actualizadas. El cierre ganador se prueba
+automáticamente; no se afirma una partida visual completa ni auditoría de
+accesibilidad. [Captura de la interfaz](docs/interfaz-windows.png).

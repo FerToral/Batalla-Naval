@@ -56,7 +56,10 @@ Los porcentajes de cobertura corresponden al archivo activo, no a la
 interfaz ni a todos los auxiliares docentes. Cuatro pruebas adicionales
 ejecutan el controlador sin abrir ventanas: cierre tras el impacto final,
 alternancia, detección del ganador y disparos de PC sin repetición.
-La GUI aún necesita una revisión visual interactiva específica.
+Además se abrió la GUI real en Windows: grillas y coordenadas visibles
+sin recortes, impacto en A1, respuesta de la PC en B3 y retorno al turno
+UNO con ambas marcas. Los diálogos se comprobaron por teclado. La captura
+se conserva en interfaz-windows.png; no es una partida visual completa.
 
 El cierre de interfaz usa barcos hundidos; el ejercicio 6 usa barcos
 descubiertos. La decisión y el cambio de expectativa quedan explícitos,
