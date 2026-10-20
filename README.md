@@ -34,13 +34,19 @@ biblioteca.py permanece intacta.
 python -m unittest tests_materia test_regresiones test_interfaz -v
 ```
 
-**49 pruebas pasan:** 28 históricas, 17 regresiones del núcleo y cuatro
+**51 pruebas pasan:** 28 casos de origen histórico (uno con expectativa
+reconciliada y contraste de su resultado anterior), 19 regresiones del núcleo y cuatro
 del controlador de interfaz. Estas últimas no abren ventanas: comprueban
 disparos únicos, alternancia y cierre de partida con diálogos simulados.
 No son una revisión visual de Tkinter. Se mantienen las comprobaciones
 de últimos ejercicios, inmutabilidad y estados mal dimensionados.
 
-Las nuevas regresiones reprodujeron dos excepciones del validador antes de la corrección. Ahora se valida la estructura antes de comparar posiciones entre tableros. No se alteraron las expectativas del archivo histórico para hacer pasar el código.
+Las regresiones reprodujeron dos excepciones del validador antes de la
+corrección. Ahora se valida la estructura antes de comparar posiciones.
+El ejercicio 6 sigue la existencia de un impacto por barco del contrato
+TN; la GUI conserva una regla separada de barcos hundidos. La expectativa
+histórica revisada y su contexto se explican en docs/CONSIGNA.md; no se
+presenta como si hubiera permanecido intacta.
 
 Para medir cobertura:
 
@@ -50,16 +56,22 @@ python -m coverage run --branch --source=batallaNaval -m unittest tests_materia 
 python -m coverage report
 ```
 
-Última medición: **162/162 líneas ejecutables (100 %) y 54/54 ramas (100 %)** en batallaNaval.py. La cobertura alta no demuestra por sí sola concordancia completa con la especificación.
+Última medición tras separar descubrir/hundir: **172/172 líneas y 62/62
+ramas (100 %)** en batallaNaval.py. La cobertura alta no demuestra por sí
+sola aprobación docente ni revisión visual del programa.
 
 ## Estructura y versiones
 
 - batallaNaval.py: implementación usada por la interfaz y las pruebas.
 - batallaNavalCorregido.py: variante histórica, conservada como referencia; no sustituye silenciosamente al archivo activo.
 - biblioteca.py e interfaz_batalla_naval.py: auxiliares del trabajo.
-- tests_materia.py: pruebas históricas conservadas.
+- tests_materia.py: casos históricos; una expectativa revisada explícitamente por el contrato TN.
 - test_regresiones.py: comprobaciones adicionales de mantenimiento.
 - test_interfaz.py: controlador sin ventana ni datos reales.
-- docs/CONSIGNA.md: fuente académica, mapa y discrepancias pendientes.
+- docs/CONSIGNA.md: fuente académica, mapa y decisiones de compatibilidad.
 
-Historia original en [GitLab](https://gitlab.com/dino_code/FerToral-project). La rama de revisión en GitHub preserva sus commits. No se considera aprobación docente ni cierre completo mientras la diferencia de contrato del último ejercicio no estén reconciliadas.
+Historia original en [GitLab](https://gitlab.com/dino_code/FerToral-project).
+La rama de revisión en GitHub preserva sus commits. El contrato de los
+seis ejercicios queda revisado respecto del PDF TN recuperado; esto no
+es una aprobación docente. La revisión visual interactiva de Tkinter
+sigue separada de las comprobaciones automáticas del controlador.

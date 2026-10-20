@@ -305,8 +305,24 @@ def posicionesDeBarcos(barcos: list[BarcoEnGrilla]) -> list[Posición]:
 
 
 def todosLosBarcosDescubiertos(grillaJugadorOponente: Grilla, grillaOponenteLocal: Grilla) -> bool:
+    """Ej.6 TN: al menos una posición descubierta por cada barco, no hundido."""
+    for barco in barcosEnGrilla(grillaOponenteLocal):
+        if not barcoDescubiertoEn(barco,grillaJugadorOponente):
+            return False
+    return True
+
+
+def barcoDescubiertoEn(barco: BarcoEnGrilla, grilla: Grilla) -> bool:
+    """Interpretación existencial del auxiliar formal, página 22 del PDF TN."""
+    for posicion in barco:
+        if celdaEnPosición(grilla,posicion) != VACÍO:
+            return True
+    return False
+
+
+def todosLosBarcosHundidos(grillaJugadorOponente: Grilla, grillaOponenteLocal: Grilla) -> bool:
     """
-    Indica si todos los barcos de una grilla fueron descubiertos en otra.
+    Regla histórica de victoria: todas las posiciones de cada barco acertadas.
     """
 
     todos_descubiertos_por_ahora = True

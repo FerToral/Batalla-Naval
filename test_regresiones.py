@@ -52,6 +52,29 @@ class ContratosIniciales(unittest.TestCase):
 
 
 class UltimosEjercicios(unittest.TestCase):
+    def test_descubrir_no_es_hundir_y_requiere_cada_barco(self):
+        local = [[BARCO,BARCO,VACÍO],[VACÍO,VACÍO,VACÍO],[BARCO,BARCO,VACÍO]]
+        parcial = [[BARCO,VACÍO,VACÍO],[VACÍO,VACÍO,VACÍO],[BARCO,VACÍO,VACÍO]]
+        self.assertTrue(juego.todosLosBarcosDescubiertos(parcial,local))
+        self.assertFalse(juego.todosLosBarcosHundidos(parcial,local))
+        parcial[2][0] = VACÍO
+        self.assertFalse(juego.todosLosBarcosDescubiertos(parcial,local))
+        self.assertTrue(juego.todosLosBarcosHundidos(local,local))
+
+    def test_jugador_perfecto_con_un_impacto_por_barco_y_sin_agua(self):
+        local_uno = [[BARCO,BARCO,VACÍO],[VACÍO,VACÍO,VACÍO],[VACÍO,VACÍO,VACÍO]]
+        local_dos = [[VACÍO,VACÍO,VACÍO],[VACÍO,VACÍO,VACÍO],[BARCO,BARCO,VACÍO]]
+        oponente_uno = [[VACÍO,VACÍO,VACÍO],[VACÍO,VACÍO,VACÍO],[BARCO,VACÍO,VACÍO]]
+        oponente_dos = [[BARCO,VACÍO,VACÍO],[VACÍO,VACÍO,VACÍO],[VACÍO,VACÍO,VACÍO]]
+        estado = ((3,3),[2],[UNO],(local_uno,oponente_uno),(local_dos,oponente_dos))
+        self.assertTrue(juego.esEstadoDeJuegoVálido(estado))
+        self.assertTrue(juego.esJugadorPerfecto(estado,UNO))
+        self.assertTrue(juego.esJugadorPerfecto(estado,DOS))
+        from interfaz_batalla_naval import InterfazBatallaNaval
+        interfaz = InterfazBatallaNaval.__new__(InterfazBatallaNaval)
+        interfaz.estado_juego = estado
+        self.assertIsNone(interfaz.ganador())
+
     def test_balance_no_permite_dos_ataques_de_diferencia_ni_mas_del_segundo(self):
         estado = estado_inicial()
         estado[3][1][0][1] = AGUA

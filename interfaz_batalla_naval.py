@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import random
-from batallaNaval import (nuevoJuego, dispararEnPosición, todosLosBarcosDescubiertos)
+from batallaNaval import (nuevoJuego, dispararEnPosición, todosLosBarcosHundidos)
 from biblioteca import *
 
 
@@ -241,7 +241,7 @@ class InterfazBatallaNaval:
             oponente = DOS if jugador == UNO else UNO
             local_rival = grillaLocal(tableroDeJugador(self.estado_juego, oponente))
             descubierta = grillaOponente(tableroDeJugador(self.estado_juego, jugador))
-            if todosLosBarcosDescubiertos(descubierta, local_rival):
+            if todosLosBarcosHundidos(descubierta, local_rival):
                 return jugador
         return None
 

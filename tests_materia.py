@@ -640,7 +640,7 @@ class hayJugadorPerfecto_Test(unittest.TestCase):
         estadoDeJuego: EstadoJuego = ((4,4), [2,2], [DOS], (grillaUnoLocal, grillaUnoOponente), (grillaDosLocal, grillaDosOponente))
         self.assertTrue(hayJugadorPerfecto(estadoDeJuego))
 
-    def test_jugador_dos_tiene_agua(self):
+    def test_jugador_dos_tiene_agua_pero_uno_descubrio_ambos_barcos_TN(self):
         
         grillaUnoLocal = [[VACÍO, VACÍO, VACÍO, VACÍO],
                           [BARCO, VACÍO, VACÍO, VACÍO],
@@ -662,7 +662,11 @@ class hayJugadorPerfecto_Test(unittest.TestCase):
                              [BARCO, VACÍO, VACÍO, VACÍO],
                              [VACÍO, BARCO, BARCO, AGUA]]
         estadoDeJuego: EstadoJuego = ((4,4), [2,2], [DOS], (grillaUnoLocal, grillaUnoOponente), (grillaDosLocal, grillaDosOponente))
-        self.assertFalse(hayJugadorPerfecto(estadoDeJuego))
+        # Corrección 2026: DOS tiene agua, pero UNO tocó cada barco sin agua.
+        # El resultado histórico False exigía hundirlos; TN pide descubrirlos.
+        self.assertTrue(hayJugadorPerfecto(estadoDeJuego))
+        import batallaNavalCorregido as variante_historica
+        self.assertFalse(variante_historica.hayJugadorPerfecto(estadoDeJuego))
 
     def test_jugador_uno_tiene_agua(self):
         

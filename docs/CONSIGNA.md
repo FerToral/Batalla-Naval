@@ -25,10 +25,22 @@ Se conserva el PDF original en el respaldo privado del curso. No se copia al rep
 El PDF y las soluciones/pruebas históricas coinciden en materia, edición y ejercicios, pero se detectaron diferencias sustantivas. No basta que las pruebas pasen para decidir que son equivalentes.
 
 1. **Balance de ataques.** El PDF agrega una condición de diferencia de cero o uno entre los disparos de los dos jugadores. Se confirmó también en las otras dos versiones recuperadas del mismo TP (21 y 25 páginas). El validador histórico aceptaba dos ataques de diferencia: se incorporó la condición común a las tres fuentes y se agregó una regresión, conservando los 28 tests históricos.
-2. **Descubrir frente a hundir.** En la página 22, el auxiliar formal de barco descubierto usa existencia de una posición marcada. El código histórico exige que estén descubiertas todas las posiciones. En un barco de tamaño dos con un solo impacto, sin agua, ambas interpretaciones difieren. No se convirtió una interpretación en corrección silenciosa.
+2. **Descubrir frente a hundir.** Se adopta el contrato formal de Turno Noche: al menos una posición no vacía de cada barco. todosLosBarcosDescubiertos conserva la firma de dos grillas del proyecto y adapta el contrato con barcoDescubiertoEn. La regla anterior queda como todosLosBarcosHundidos para la victoria de la GUI. La variante histórica completa permanece en batallaNavalCorregido.py y en el historial Git.
 3. **Pruebas históricas.** Un caso de múltiples barcos usa assertTrue(resultado, esperado), que sólo comprueba que resultado no esté vacío. Otro método no empieza por test y no se descubre automáticamente. Las regresiones nuevas comparan el contenido normalizado y ejecutan ese caso adicional sin modificar el archivo histórico.
 
-La diferencia restante sobre jugador perfecto impide presentar la revisión como cierre formal del TP. Sí se corrigió un defecto independiente: esEstadoDeJuegoVálido evaluaba comparaciones de tableros aun cuando sus dimensiones ya eran inválidas, produciendo IndexError en dos casos reproducibles.
+Se resuelve la diferencia sobre jugador perfecto siguiendo la especificación
+recuperada, no una certificación docente. Un test histórico esperaba False
+porque DOS tenía agua, aunque UNO ya había tocado ambos barcos sin agua.
+Ahora espera True y verifica también el False de la variante histórica,
+para hacer visible el cambio. Su fixture no cumple el balance de ataques
+del contrato actual; la nueva regresión usa además un estado válido, con
+un impacto por jugador sobre barcos de tamaño dos. Ambos son perfectos
+según TN, pero ninguno ganó la partida. No se oculta ese caso fuera de
+precondición entre los ejemplos históricos.
+
+También se corrigió un defecto independiente: esEstadoDeJuegoVálido evaluaba
+comparaciones de tableros aun cuando sus dimensiones ya eran inválidas,
+produciendo IndexError en dos casos reproducibles.
 
 ## Otras versiones recuperadas
 
@@ -36,7 +48,9 @@ El enunciado base de 21 páginas tiene SHA-256 7f8514af346c3e0c529f72cfff3f2e578
 
 ## Conservación y autoría
 
-Las funciones mantienen sus nombres académicos, las soluciones históricas y auxiliares permanecen en Git. La revisión agrega pruebas y una validación por cortocircuito; no reescribe el ejercicio con herramientas ajenas a su nivel. biblioteca.py y la interfaz no se modificaron.
+Las funciones mantienen sus nombres académicos; las soluciones históricas y
+auxiliares permanecen en Git. biblioteca.py no se modifica. La interfaz usa
+la regla separada de barcos hundidos y evita turnos posteriores al cierre.
 
 Los porcentajes de cobertura corresponden al archivo activo, no a la
 interfaz ni a todos los auxiliares docentes. Cuatro pruebas adicionales
@@ -44,6 +58,6 @@ ejecutan el controlador sin abrir ventanas: cierre tras el impacto final,
 alternancia, detección del ganador y disparos de PC sin repetición.
 La GUI aún necesita una revisión visual interactiva específica.
 
-El cierre de interfaz usa barcos hundidos; no cambia el contrato del
-ejercicio 6 sobre jugador perfecto. La discrepancia descubrir/hundir
-sigue explícita, sin mezclar la ampliación de otra variante del TP.
+El cierre de interfaz usa barcos hundidos; el ejercicio 6 usa barcos
+descubiertos. La decisión y el cambio de expectativa quedan explícitos,
+sin mezclar la ampliación de otra variante del TP.
